@@ -14,54 +14,55 @@
 
 angular.module('mm.addons.qtype_wordselect')
 
-/**
- * Directive to render a Word Select question.
- *
- * @module mm.addons.qtype_wordselect
- * @ngdoc directive
- * @name mmaQtypeWordselect
- */
-.directive('mmaQtypeWordselect', function($log, $mmQuestionHelper,$mmUtil) {
-	$log = $log.getInstance('mmaQtypeWordselect');
-    return {
-        restrict: 'A',
-        priority: 100,
-        templateUrl: 'addons/qtype/wordselect/template.html',
-        link: function(scope) {
-            var answersEl, questionEl,
-                inputIds = [],
-                question = scope.question;
+        /**
+         * Directive to render a Word Select question.
+         *
+         * @module mm.addons.qtype_wordselect
+         * @ngdoc directive
+         * @name mmaQtypeWordselect
+         */
+        .directive('mmaQtypeWordselect', function ($log, $mmQuestionHelper, $mmaQtypeWordselectRender, $timeout, $mmUtil) {
+            $log = $log.getInstance('mmaQtypeWordselect');
+            return {
+                restrict: 'A',
+                priority: 100,
+                templateUrl: 'addons/qtype/wordselect/template.html',
+                link: function (scope) {
+                    var answersEl, questionEl,
+                            inputIds = [],
+                            question = scope.question;
+                    if (!question) {
+                        $log.warn('Aborting because of no question received.');
+                        return $mmQuestionHelper.showDirectiveError(scope);
+                    }
+                    questionEl = angular.element(question.html);
+                    questionEl = questionEl[0] || questionEl;
 
-            if (!question) {
-                $log.warn('Aborting because of no question received.');
-                return $mmQuestionHelper.showDirectiveError(scope);
-            }
+                    question.readonly = angular.element(answersEl).hasClass('readonly');
+                    question.text = $mmUtil.getContentsOfElement(questionEl, '.qtext');
+                    question.introduction = $mmUtil.getContentsOfElement(questionEl, '.introduction');
+                    if (typeof question.text == 'undefined') {
+                        log.warn('Aborting because of an error parsing question.', question.name);
+                        return self.showDirectiveError(scope);
+                    }
 
-            questionEl = angular.element(question.html);
-            questionEl = questionEl[0] || questionEl;
+                    scope.selectWord = function (event) {
+                        selector = "#" + event.target.id;
+                        parts = selector.split(":");
+                        selector = parts[0] + "\\:" + parts[1];
+                        word = document.querySelector(selector + ".selectable");
+                        checkbox=document.querySelector("[type=checkbox]"+selector);
+                        word = angular.element(word);
+                        if (word.hasClass('selected')) {
+                           word.removeClass('selected');
+                         //  checkbox.attr('aria-checked','false');
 
-            // Replace Moodle's correct/incorrect and feedback classes with our own.
-            $mmQuestionHelper.replaceCorrectnessClasses(questionEl);
-            $mmQuestionHelper.replaceFeedbackClasses(questionEl);
+                        } else {
+                            word.addClass('selected');
+                           // checkbox.attr('aria-checked','true');
+                        }
+                    }
 
-            // Treat the correct/incorrect icons.
-            $mmQuestionHelper.treatCorrectnessIcons(scope, questionEl);
-
-            question.readonly = angular.element(answersEl).hasClass('readonly');
-
-            question.text = $mmUtil.getContentsOfElement(questionEl, '.qtext');
-            question.introduction = $mmUtil.getContentsOfElement(questionEl, '.introduction');
-            if (typeof question.text == 'undefined') {
-                log.warn('Aborting because of an error parsing question.', question.name);
-                return self.showDirectiveError(scope);
-            }
-
-            inputIdsEls = questionEl.querySelectorAll('input[type="hidden"]:not([name*=sequencecheck])');
-            for (var x = 0; x < inputIdsEls.length; x++) {
-                question.text += inputIdsEls[x].outerHTML;
-                inputIds.push(inputIdsEls[x].getAttribute('id'));
-            }
-
-        }
-    };
-});
+                }
+            };
+        });

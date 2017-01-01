@@ -2,8 +2,8 @@
     .que.wordselect input[type=checkbox]{
         display:none;
     }
-    .que.wordselect .selectable{
-        cursor:pointer;
+  .selectable{
+      /*  cursor:pointer;
         border:solid thin black;
         border-radius:0.25em;
         background-image: none;
@@ -15,9 +15,10 @@
         background-size: auto auto;
         display:inline;
         white-space:nowrap;
+        */
     }
 
-    .que.wordselect .selected{
+   .selected{
         background: #cee0f4;
         border-radius:0.25em;
         background-color:#CBCFD4;
