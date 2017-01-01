@@ -50,16 +50,25 @@ angular.module('mm.addons.qtype_wordselect')
                         selector = "#" + event.target.id;
                         parts = selector.split(":");
                         selector = parts[0] + "\\:" + parts[1];
-                        word = document.querySelector(selector + ".selectable");
-                        checkbox=document.querySelector("[type=checkbox]"+selector);
-                        word = angular.element(word);
-                        if (word.hasClass('selected')) {
-                           word.removeClass('selected');
-                         //  checkbox.attr('aria-checked','false');
-
+                        selection = document.querySelector(selector + ".selectable");
+                        selection = angular.element(selection);   
+                        var wordname = selection.attr('name');
+                        var hidden = document.getElementById(wordname);
+                        if (selection.hasClass('selected')) {
+                           selection.removeClass('selected');
+                           selection.attr("title");
+                           selection.attr('aria-checked','false');
+                           hidden.type="text";  
+                           hidden.style.visibility="hidden";
+                           hidden.style.display="none";
+                           hidden.value='';
                         } else {
-                            word.addClass('selected');
-                           // checkbox.attr('aria-checked','true');
+                            selection.addClass('selected');
+                            selection.attr('title', 'selected');
+                            selection.attr('aria-checked','true');
+                            hidden.type='checkbox';
+                            hidden.value="on";
+                            hidden.checked="true";
                         }
                     }
 
