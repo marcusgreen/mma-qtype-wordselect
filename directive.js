@@ -21,57 +21,71 @@ angular.module('mm.addons.qtype_wordselect')
          * @ngdoc directive
          * @name mmaQtypeWordselect
          */
-        .directive('mmaQtypeWordselect', function ($log, $mmQuestionHelper, $mmaQtypeWordselectRender, $timeout, $mmUtil) {
+        .directive('mmaQtypeWordselect', function($log, $mmQuestionHelper, $mmUtil) {
             $log = $log.getInstance('mmaQtypeWordselect');
             return {
                 restrict: 'A',
                 priority: 100,
                 templateUrl: 'addons/qtype/wordselect/template.html',
                 link: function (scope) {
-                    var answersEl, questionEl,
-                            inputIds = [],
-                            question = scope.question;
+                      var question = scope.question,
+                            questionEl,
+                            introduction,
+                            content;
+                    
                     if (!question) {
                         $log.warn('Aborting because of no question received.');
                         return $mmQuestionHelper.showDirectiveError(scope);
                     }
-                    questionEl = angular.element(question.html);
-                    questionEl = questionEl[0] || questionEl;
 
-                    question.readonly = angular.element(answersEl).hasClass('readonly');
-                    question.text = $mmUtil.getContentsOfElement(questionEl, '.qtext');
-                    question.introduction = $mmUtil.getContentsOfElement(questionEl, '.introduction');
-                    if (typeof question.text == 'undefined') {
+                    questionEl = angular.element(question.html);
+
+                    // Get question content.
+                    content = questionEl[0].querySelector('.qtext');
+                    introduction = questionEl[0].querySelector('.introduction');
+                    if (!content) {
                         log.warn('Aborting because of an error parsing question.', question.name);
-                        return self.showDirectiveError(scope);
+                        return $mmQuestionHelper.showDirectiveError(scope);
                     }
+
+                    // Remove sequencecheck and validation error.
+                    $mmUtil.removeElement(content, 'input[name*=sequencecheck]');
+                    $mmUtil.removeElement(content, '.validationerror');
+
+                    // Replace Moodle's correct/incorrect classes with our own.
+                    $mmQuestionHelper.replaceCorrectnessClasses(questionEl);
+                    // Treat the correct/incorrect icons.
+                    $mmQuestionHelper.treatCorrectnessIcons(scope, questionEl);
+
+                    // Set the question text.
+                    question.text = content.innerHTML;
+                    question.introduction = introduction.innerHTML;
 
                     scope.selectWord = function (event) {
                         selector = "#" + event.target.id;
                         parts = selector.split(":");
                         selector = parts[0] + "\\:" + parts[1];
                         selection = document.querySelector(selector + ".selectable");
-                        selection = angular.element(selection);   
+                        selection = angular.element(selection);
                         var wordname = selection.attr('name');
                         var hidden = document.getElementById(wordname);
                         if (selection.hasClass('selected')) {
-                           selection.removeClass('selected');
-                           selection.attr("title");
-                           selection.attr('aria-checked','false');
-                           hidden.type="text";  
-                           hidden.style.visibility="hidden";
-                           hidden.style.display="none";
-                           hidden.value='';
+                            selection.removeClass('selected');
+                            selection.attr("title");
+                            selection.attr('aria-checked', 'false');
+                            hidden.type = "text";
+                            hidden.style.visibility = "hidden";
+                            hidden.style.display = "none";
+                            hidden.value = "";
                         } else {
                             selection.addClass('selected');
                             selection.attr('title', 'selected');
-                            selection.attr('aria-checked','true');
-                            hidden.type='checkbox';
-                            hidden.value="on";
-                            hidden.checked="true";
+                            selection.attr('aria-checked', 'true');
+                            hidden.type = 'checkbox';
+                            hidden.value = "on";
+                            hidden.checked = "true";
                         }
                     }
-
                 }
             };
         });
