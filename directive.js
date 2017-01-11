@@ -60,19 +60,26 @@ angular.module('mm.addons.qtype_wordselect')
                     // Set the question text.
                     question.text = content.innerHTML;
                     question.introduction = introduction.innerHTML;
-
                     scope.selectWord = function (event) {
                         selector = "#" + event.target.id;
                         parts = selector.split(":");
                         selector = parts[0] + "\\:" + parts[1];
                         selection = document.querySelector(selector + ".selectable");
-                        selection = angular.element(selection);
+                        if (selection == null){
+                            /* selection will be null after marking/readonly */
+                            return;
+                        }
+                        selection = angular.element(selection);                      
                         var wordname = selection.attr('name');
                         var hidden = document.getElementById(wordname);
                         if (selection.hasClass('selected')) {
                             selection.removeClass('selected');
                             selection.attr("title");
                             selection.attr('aria-checked', 'false');
+                            /**
+                             * change the type to text to avoid the problem that
+                             * unchecked checkboxes are not passed in the request
+                             **/
                             hidden.type = "text";
                             hidden.style.visibility = "hidden";
                             hidden.style.display = "none";
