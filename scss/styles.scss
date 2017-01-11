@@ -1,8 +1,14 @@
 .mma-qtype-wordselect-container {
+    
     .que.wordselect input[type=checkbox]{
         display:none;
     }
+    
+    .introduction * {
+        font-size:large;
+    }
     .selectable{
+        font-size:large;
         cursor:pointer;
         border-radius:0.25em;
         background-image: none;
@@ -36,7 +42,7 @@
     }
 
 
-    .incorrect{
+    .incorrectresponse{
         background-color: #f7d0d0;
         color: #b71c1c;
         text-decoration: line-through;
@@ -55,7 +61,7 @@
         -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         box-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
-
+    /* for non selected correct words */
     .correct{
         background-color: #EEEE22;
         border-radius:0.25em;
@@ -84,5 +90,24 @@
         -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         box-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
-
+    .wordselect-table td{
+        border:solid;
+        border-width:thin;
+        padding:4px;
+    }
+    .wordselect-table th{
+        border:solid;
+        border-width:thin;
+        background-color: lightgray;
+    }
+    .wordselect-table caption{
+        border-bottom:solid;
+        border-width:thin;
+    }
+    .wordselect-table-col{
+        background-color: lightgray;
+    }
+    .wordselect-table-row{
+        background-color: lightgray;
+    }
 }
